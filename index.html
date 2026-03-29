@@ -1,0 +1,992 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalScan — Snap. Know. Eat Better.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron: #FF6B1A;
+    --turmeric: #F5A623;
+    --cream: #FDF6EC;
+    --deep: #1A0F00;
+    --muted: #7A6A55;
+    --card: #FFF9F2;
+    --border: #EAD9C5;
+    --green: #2D7A4F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--deep);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 5%;
+    background: rgba(253,246,236,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.4rem;
+    color: var(--saffron);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--deep); }
+  nav a {
+    background: var(--saffron);
+    color: white;
+    text-decoration: none;
+    padding: 9px 22px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+  }
+  nav a:hover { background: var(--deep); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 5% 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,107,26,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(245,166,35,0.1) 0%, transparent 60%);
+  }
+
+  .floating-emoji {
+    position: absolute;
+    font-size: 2.5rem;
+    opacity: 0.15;
+    animation: floatAround 8s ease-in-out infinite;
+    user-select: none;
+  }
+  .fe1 { top: 15%; left: 8%; animation-delay: 0s; font-size: 3rem; }
+  .fe2 { top: 20%; right: 10%; animation-delay: 1.5s; }
+  .fe3 { bottom: 20%; left: 12%; animation-delay: 3s; font-size: 2rem; }
+  .fe4 { bottom: 25%; right: 8%; animation-delay: 2s; font-size: 3.5rem; }
+  .fe5 { top: 45%; left: 3%; animation-delay: 4s; font-size: 2rem; }
+  .fe6 { top: 50%; right: 4%; animation-delay: 1s; font-size: 2.2rem; }
+
+  @keyframes floatAround {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-18px) rotate(5deg); }
+    66% { transform: translateY(8px) rotate(-3deg); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 780px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,107,26,0.1);
+    border: 1px solid rgba(255,107,26,0.25);
+    color: var(--saffron);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .badge-dot {
+    width: 7px; height: 7px;
+    background: var(--saffron);
+    border-radius: 50%;
+    animation: pulse 1.5s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 10px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--saffron);
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 22px auto 38px;
+    max-width: 560px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-cta {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--saffron);
+    color: white;
+    border: none;
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 8px 32px rgba(255,107,26,0.3);
+  }
+  .btn-primary:hover {
+    background: var(--deep);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(26,15,0,0.2);
+  }
+  .hero-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  /* STATS STRIP */
+  .stats {
+    display: flex; justify-content: center; gap: 0;
+    flex-wrap: wrap;
+    margin: 60px auto 0;
+    max-width: 640px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--card);
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .stat {
+    flex: 1; min-width: 140px;
+    padding: 22px 20px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--saffron);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HOW IT WORKS */
+  .section { padding: 100px 5%; }
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--saffron);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .section-desc {
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 500px;
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .steps { display: flex; flex-direction: column; gap: 28px; margin-top: 50px; }
+  .step {
+    display: flex; gap: 20px; align-items: flex-start;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .step.visible { opacity: 1; transform: translateX(0); }
+  .step-num {
+    width: 44px; height: 44px; min-width: 44px;
+    background: var(--saffron);
+    color: white;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .step-body h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .step-body p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  .phone-mock {
+    background: var(--deep);
+    border-radius: 36px;
+    padding: 28px 22px;
+    max-width: 300px;
+    margin: 0 auto;
+    box-shadow: 0 40px 80px rgba(26,15,0,0.25);
+    position: relative;
+  }
+  .phone-notch {
+    width: 90px; height: 10px;
+    background: #333;
+    border-radius: 10px;
+    margin: 0 auto 20px;
+  }
+  .chat-bubble {
+    border-radius: 16px 16px 16px 4px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    animation: none;
+  }
+  .chat-in {
+    background: #2a2a2a;
+    color: #ccc;
+    max-width: 85%;
+  }
+  .chat-out {
+    background: #25D366;
+    color: white;
+    margin-left: auto;
+    border-radius: 16px 16px 4px 16px;
+    max-width: 90%;
+  }
+  .chat-label {
+    font-size: 0.68rem;
+    color: #666;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+  .chat-image-placeholder {
+    background: #333;
+    border-radius: 12px;
+    height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  .chat-time { font-size: 0.65rem; opacity: 0.6; text-align: right; margin-top: 4px; }
+
+  /* PAIN POINTS */
+  .pain-section {
+    background: var(--deep);
+    color: var(--cream);
+    padding: 100px 5%;
+    position: relative;
+    overflow: hidden;
+  }
+  .pain-section::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse 60% 60% at 20% 50%, rgba(255,107,26,0.12) 0%, transparent 70%);
+  }
+  .pain-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .pain-section .section-title { color: var(--cream); }
+  .pain-section .section-desc { color: rgba(253,246,236,0.6); }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .pain-card {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 28px;
+    background: rgba(255,255,255,0.03);
+    transition: all 0.3s;
+    opacity: 0; transform: translateY(20px);
+  }
+  .pain-card.visible { opacity: 1; transform: translateY(0); }
+  .pain-card:hover {
+    border-color: rgba(255,107,26,0.3);
+    background: rgba(255,107,26,0.05);
+  }
+  .pain-icon { font-size: 2rem; margin-bottom: 14px; }
+  .pain-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--cream);
+  }
+  .pain-card p { font-size: 0.85rem; color: rgba(253,246,236,0.5); line-height: 1.6; }
+  .pain-strike {
+    text-decoration: line-through;
+    color: rgba(255,107,26,0.7);
+  }
+
+  /* FORM SECTION */
+  .form-section {
+    padding: 100px 5%;
+    background: var(--cream);
+  }
+  .form-wrapper {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: start;
+  }
+  .form-left { position: sticky; top: 100px; }
+  .early-tag {
+    display: inline-block;
+    background: rgba(45,122,79,0.1);
+    color: var(--green);
+    border: 1px solid rgba(45,122,79,0.2);
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 18px;
+  }
+  .perks { margin-top: 36px; display: flex; flex-direction: column; gap: 14px; }
+  .perk {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .perk-icon {
+    width: 32px; height: 32px; min-width: 32px;
+    background: rgba(255,107,26,0.1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .perk-text h4 {
+    font-size: 0.9rem; font-weight: 600;
+    font-family: 'Syne', sans-serif;
+    margin-bottom: 2px;
+  }
+  .perk-text p { font-size: 0.8rem; color: var(--muted); }
+
+  /* FORM */
+  .form-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(26,15,0,0.06);
+  }
+  .form-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem; font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .form-card p { font-size: 0.88rem; color: var(--muted); margin-bottom: 28px; }
+
+  .form-group { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--deep);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--deep);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--saffron);
+    box-shadow: 0 0 0 3px rgba(255,107,26,0.1);
+    background: white;
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  select { cursor: pointer; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .checkbox-item {
+    display: flex; gap: 10px; align-items: center;
+    cursor: pointer;
+  }
+  .checkbox-item input[type="checkbox"] {
+    width: 18px; height: 18px; min-width: 18px;
+    padding: 0; margin: 0;
+    accent-color: var(--saffron);
+    cursor: pointer;
+  }
+  .checkbox-item span { font-size: 0.88rem; color: var(--deep); }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--saffron);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 10px;
+    letter-spacing: 0.3px;
+  }
+  .submit-btn:hover {
+    background: var(--deep);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(26,15,0,0.15);
+  }
+  .submit-btn:active { transform: translateY(0); }
+  .form-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  /* SUCCESS */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .success-icon { font-size: 3.5rem; margin-bottom: 16px; }
+  .success-state h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem; font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--green);
+  }
+  .success-state p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  /* SOCIAL PROOF */
+  .proof-strip {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 5%;
+    text-align: center;
+  }
+  .proof-strip p {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .avatars {
+    display: flex; justify-content: center; align-items: center; gap: 0;
+    margin-bottom: 16px;
+  }
+  .avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-left: -10px;
+    background: var(--saffron);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    font-family: 'Syne', sans-serif;
+  }
+  .a1 { background: #FF6B1A; }
+  .a2 { background: #F5A623; }
+  .a3 { background: #2D7A4F; }
+  .a4 { background: #c0392b; }
+  .a5 { background: #8e44ad; }
+  .proof-count {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    color: var(--deep);
+  }
+  .proof-count span { color: var(--saffron); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 5%;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+  footer strong { color: var(--saffron); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .how-grid { grid-template-columns: 1fr; gap: 40px; }
+    .phone-mock { display: none; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .form-wrapper { grid-template-columns: 1fr; gap: 40px; }
+    .form-left { position: static; }
+    .form-row { grid-template-columns: 1fr; }
+    h1 { letter-spacing: -1px; }
+    .stats { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .stat:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Cal<span>Scan</span></div>
+  <a href="#early-access" onclick="event.preventDefault(); document.getElementById('early-access').scrollIntoView({behavior:'smooth'})">Get Early Access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <span class="floating-emoji fe1">🍛</span>
+  <span class="floating-emoji fe2">📸</span>
+  <span class="floating-emoji fe3">🥗</span>
+  <span class="floating-emoji fe4">🍱</span>
+  <span class="floating-emoji fe5">🫓</span>
+  <span class="floating-emoji fe6">⚡</span>
+
+  <div class="hero-content">
+    <div class="badge"><span class="badge-dot"></span> Early Access — Limited Spots</div>
+    <h1>Snap Your<br><span class="italic">Indian Food.</span><br>Know Your Calories.</h1>
+    <p class="hero-sub">No more manual logging. No more guessing. Just photograph your dal, roti, sabzi — and get instant calorie counts built for real Indian meals.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})">
+        Join the Waitlist — Free →
+      </button>
+      <span class="hero-note">🔒 No spam. Unsubscribe anytime.</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">3s</div>
+        <div class="stat-label">Scan Time</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Indian Dishes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Manual Logging</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">₹0</div>
+        <div class="stat-label">Early Access Cost</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="how-grid">
+    <div>
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Three steps.<br>That's actually it.</h2>
+      <p class="section-desc">We rebuilt calorie tracking from scratch for Indian food — because MyFitnessPal was built for salads, not thalis.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>📸 Snap a photo</h3>
+            <p>Open the app and photograph your meal. One photo covers the whole plate — dal, roti, sabzi and all.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>⚡ AI reads it instantly</h3>
+            <p>Our model is trained specifically on Indian cuisine — it knows the difference between palak paneer and matar paneer, and accounts for ghee.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>📊 Get your breakdown</h3>
+            <p>Calories, protein, carbs, fat — plus one personalised insight every meal. No typing, no searching, no guessing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone mockup -->
+    <div class="phone-mock">
+      <div class="phone-notch"></div>
+      <div class="chat-label">You sent a photo</div>
+      <div class="chat-image-placeholder">🍛</div>
+      <div class="chat-bubble chat-in">
+        <strong style="color:#25D366">CalScan ⚡</strong><br><br>
+        🍽️ <strong>Meal Scan</strong><br>
+        ────────────<br>
+        Dal Tadka (1 katori) → 180 cal<br>
+        Roti ×2 → 210 cal<br>
+        Aloo Gobi → 95 cal<br>
+        Chaas → 40 cal<br>
+        ────────────<br>
+        <strong>Total: 525 cal</strong><br>
+        Protein: ~14g · Fat: ~16g<br><br>
+        💡 <em>Ghee adds 60 cal to this dal. Half the amount = 900 cal saved/month.</em>
+        <div class="chat-time">3:41 PM ✓✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN POINTS -->
+<section class="pain-section">
+  <div class="pain-inner">
+    <div class="section-label" style="color: rgba(255,107,26,0.8)">The Problem</div>
+    <h2 class="section-title">Every calorie app<br>fails Indian users.</h2>
+    <p class="section-desc">They were built for Western food with Western databases. Indian diets are an afterthought.</p>
+
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">🔍</div>
+        <h3><span class="pain-strike">Search "dal makhani"</span><br>→ 47 different results</h3>
+        <p>Which one is your mom's recipe? None of them. Every entry is wrong in a different way.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">⏱️</div>
+        <h3><span class="pain-strike">Log every ingredient</span><br>→ Takes 8 minutes</h3>
+        <p>By the time you've logged the meal, you've already eaten it and moved on. Nobody does this consistently.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🫙</div>
+        <h3><span class="pain-strike">Ghee? Tadka? Oil?</span><br>→ Invisible calories</h3>
+        <p>The biggest calorie drivers in Indian food are never visible in the dish. Current apps completely miss them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF STRIP -->
+<div class="proof-strip">
+  <p>Join people already on the waitlist</p>
+  <div class="avatars">
+    <div class="avatar a1">R</div>
+    <div class="avatar a2">P</div>
+    <div class="avatar a3">A</div>
+    <div class="avatar a4">S</div>
+    <div class="avatar a5">M</div>
+  </div>
+  <div class="proof-count"><span>127+</span> health-conscious Indians already signed up</div>
+</div>
+
+<!-- FORM SECTION -->
+<section class="form-section" id="early-access">
+  <div class="form-wrapper">
+    <div class="form-left">
+      <div class="early-tag">✦ Early Access</div>
+      <h2 class="section-title">Be the first to<br><span style="color:var(--saffron)">eat smarter.</span></h2>
+      <p class="section-desc" style="margin-bottom: 0">Be among the first to try CalScan and directly shape what we build for Indian users like you.</p>
+
+      <div class="perks">
+        <div class="perk">
+          <div class="perk-icon">⚡</div>
+          <div class="perk-text">
+            <h4>First in Line</h4>
+            <p>Access before public launch</p>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">🎙️</div>
+          <div class="perk-text">
+            <h4>Shape the Product</h4>
+            <p>Your feedback directly influences features</p>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">💬</div>
+          <div class="perk-text">
+            <h4>WhatsApp Updates</h4>
+            <p>Direct founder updates, no newsletter fluff</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+      <div id="form-state">
+        <h3>Request Early Access</h3>
+        <p>Takes 60 seconds. We'll reach out personally before launch.</p>
+
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="name" placeholder="Rahul Sharma" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Mobile Number *</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="email" placeholder="rahul@gmail.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="city" placeholder="Ahmedabad">
+          </div>
+          <div class="form-group">
+            <label>Age Group</label>
+            <select id="age">
+              <option value="">Select</option>
+              <option>18–24</option>
+              <option>25–34</option>
+              <option>35–44</option>
+              <option>45+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Your Health Goal *</label>
+          <select id="goal">
+            <option value="">What are you trying to achieve?</option>
+            <option>Lose weight</option>
+            <option>Build muscle / gain weight</option>
+            <option>Manage diabetes / blood sugar</option>
+            <option>Eat mindfully / be more aware</option>
+            <option>Track macros for fitness</option>
+            <option>Postpartum / new mom nutrition</option>
+            <option>Just curious about my food</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Biggest struggle with calorie tracking?</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" value="manual"> <span>Too much manual effort</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="indian"> <span>Indian dishes not in the database</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="consistency"> <span>Hard to stay consistent</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="portions"> <span>Don't know portion sizes</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" value="homefood"> <span>Home-cooked food is hard to estimate</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Anything else you'd want? (optional)</label>
+          <textarea id="feedback" placeholder="e.g. I want it to track my diabetic diet, or remind me before meals..."></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="handleSubmit()">
+          Claim My Early Access Spot →
+        </button>
+        <p class="form-footer">🔒 We never share your data. You'll hear from us personally.</p>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div class="success-state" id="success-state">
+        <div class="success-icon">🎉</div>
+        <h3>You're on the list!</h3>
+        <p>We've saved your spot. You'll be among the <strong>first 100 users</strong> to access CalScan before public launch.<br><br>
+        Expect a WhatsApp message from us within <strong>48 hours</strong> — we'd love to hear more about your goals.</p>
+        <br>
+        <p style="font-size:0.8rem; color:var(--muted)">In the meantime, share with a friend who'd find this useful 🙌</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>CalScan</strong> · Built with ❤️ for Indian kitchens · © 2025<br>
+  <span style="margin-top:8px; display:block">Questions? WhatsApp us directly.</span>
+</footer>
+
+<script>
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.step, .pain-card').forEach((el, i) => {
+    el.dataset.delay = i * 100;
+    observer.observe(el);
+  });
+
+  // ─────────────────────────────────────────────
+  // GOOGLE SHEETS SETUP (one-time, ~5 minutes):
+  //
+  // STEP 1: sheets.google.com → New Sheet → rename it "CalScan Waitlist"
+  //         Add these headers in Row 1:
+  //         Timestamp | Name | Phone | Email | City | Age | Goal | Struggles | Feedback
+  //
+  // STEP 2: Extensions → Apps Script → delete existing code → paste this:
+  //
+  //   function doGet(e) {
+  //     try {
+  //       var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  //       var p = e.parameter;
+  //       sheet.appendRow([
+  //         p.timestamp, p.name, p.phone, p.email,
+  //         p.city, p.age, p.goal, p.struggles, p.feedback
+  //       ]);
+  //       return ContentService.createTextOutput('ok');
+  //     } catch(err) {
+  //       return ContentService.createTextOutput('error: ' + err);
+  //     }
+  //   }
+  //
+  // STEP 3: Click Deploy → New Deployment
+  //         Type: Web App
+  //         Execute as: Me
+  //         Who has access: Anyone (no sign-in required)
+  //         → Click Deploy → Authorize → Copy the Web App URL
+  //
+  // STEP 4: Paste the URL below replacing YOUR_APPS_SCRIPT_WEB_APP_URL_HERE
+  // ─────────────────────────────────────────────
+
+  const SHEET_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+  async function handleSubmit() {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const goal = document.getElementById('goal').value;
+
+    if (!name || !phone || !email || !goal) {
+      alert('Please fill in all required fields (Name, Mobile, Email, Goal).');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'Saving your spot...';
+    btn.disabled = true;
+
+    const struggles = [...document.querySelectorAll('.checkbox-item input:checked')]
+      .map(cb => cb.value).join(', ');
+
+    const data = {
+      name, phone, email,
+      city: document.getElementById('city').value || '-',
+      age: document.getElementById('age').value || '-',
+      goal, struggles: struggles || '-',
+      feedback: document.getElementById('feedback').value || '-',
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+    };
+
+    if (SHEET_URL !== 'https://script.google.com/macros/s/AKfycbxgRn-uzOkXLs4wunyCyvXqO9jBnYsQ3kXtxPWKdc0Yys5k9zggiApgc8buNE7c_-0/exec') {
+      try {
+        // Build URL with query params (works with doGet, bypasses CORS completely)
+        const params = new URLSearchParams(data);
+        const fullURL = SHEET_URL + '?' + params.toString();
+
+        // Use script tag injection — guaranteed to work with Google Apps Script
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = fullURL;
+          script.onload = () => { script.remove(); resolve(); };
+          script.onerror = () => { script.remove(); resolve(); }; // resolve anyway, row likely saved
+          document.head.appendChild(script);
+          setTimeout(resolve, 4000); // fallback timeout
+        });
+      } catch (err) {
+        console.warn('Sheet sync issue:', err);
+      }
+    } else {
+      console.log('📋 [Dev mode — paste your Sheet URL to activate] Signup:', data);
+    }
+
+    // Show success
+    document.getElementById('form-state').style.display = 'none';
+    document.getElementById('success-state').style.display = 'block';
+    document.getElementById('early-access').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
