@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -892,53 +891,71 @@
     observer.observe(el);
   });
 
-  // ─────────────────────────────────────────────
-  // GOOGLE SHEETS SETUP (one-time, ~5 minutes):
+  // ╔══════════════════════════════════════════════════╗
+  // ║         GOOGLE SHEETS — FRESH SETUP             ║
+  // ║  Follow EVERY step exactly. Takes ~6 minutes.   ║
+  // ╚══════════════════════════════════════════════════╝
   //
-  // STEP 1: sheets.google.com → New Sheet → rename it "CalScan Waitlist"
-  //         Add these headers in Row 1:
-  //         Timestamp | Name | Phone | Email | City | Age | Goal | Struggles | Feedback
+  // STEP 1 — Create the sheet
+  //   • Go to sheets.google.com → click "+ Blank"
+  //   • Rename the sheet tab (bottom) to: CalScan Waitlist
+  //   • In Row 1 add these 9 headers (one per cell):
+  //     Timestamp | Name | Phone | Email | City | Age | Goal | Struggles | Feedback
   //
-  // STEP 2: Extensions → Apps Script → delete existing code → paste this:
+  // STEP 2 — Open Apps Script
+  //   • In the sheet: Extensions → Apps Script
+  //   • DELETE everything in the editor
+  //   • Paste EXACTLY this code:
   //
   //   function doGet(e) {
-  //     try {
-  //       var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  //       var p = e.parameter;
-  //       sheet.appendRow([
-  //         p.timestamp, p.name, p.phone, p.email,
-  //         p.city, p.age, p.goal, p.struggles, p.feedback
-  //       ]);
-  //       return ContentService.createTextOutput('ok');
-  //     } catch(err) {
-  //       return ContentService.createTextOutput('error: ' + err);
-  //     }
+  //     var sheet = SpreadsheetApp
+  //       .getActiveSpreadsheet()
+  //       .getActiveSheet();
+  //     var p = e.parameter;
+  //     sheet.appendRow([
+  //       p.ts, p.name, p.phone, p.email,
+  //       p.city, p.age, p.goal, p.struggles, p.feedback
+  //     ]);
+  //     return ContentService
+  //       .createTextOutput('OK')
+  //       .setMimeType(ContentService.MimeType.TEXT);
   //   }
   //
-  // STEP 3: Click Deploy → New Deployment
-  //         Type: Web App
-  //         Execute as: Me
-  //         Who has access: Anyone (no sign-in required)
-  //         → Click Deploy → Authorize → Copy the Web App URL
+  // STEP 3 — Deploy as Web App (critical settings)
+  //   • Click "Deploy" (top right) → "New deployment"
+  //   • Click the gear icon ⚙ next to "Select type" → choose "Web app"
+  //   • Description: CalScan v1  (anything)
+  //   • Execute as:        → "Me"               ← must be Me
+  //   • Who has access:    → "Anyone"            ← must be Anyone (not "Anyone with Google")
+  //   • Click "Deploy" → click "Authorize access"
+  //   • Choose your Google account → click "Allow"
+  //   • COPY the Web App URL (looks like: https://script.google.com/macros/s/ABC.../exec)
   //
-  // STEP 4: Paste the URL below replacing YOUR_APPS_SCRIPT_WEB_APP_URL_HERE
-  // ─────────────────────────────────────────────
+  // STEP 4 — TEST the URL first (before pasting here)
+  //   • Open a new browser tab
+  //   • Paste your URL + this at the end:
+  //     ?ts=test&name=Test&phone=9999999999&email=test@test.com&city=Mumbai&age=25-34&goal=test&struggles=test&feedback=test
+  //   • Press Enter — you should see "OK" on screen
+  //   • Check your sheet — a new row should appear
+  //   • If it works → paste ONLY the base URL below (without the ?... part)
+  //
+  // STEP 5 — Paste URL below
+  //   Replace the placeholder with your Web App URL:
 
+  // Your Apps Script Web App URL:
   const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzRjuQE411yMQxgn4O1WCgw9IkoEZjiTJWiyT44BwcDDXcH5vp2NXLmawx6T-C8TSw/exec';
 
   async function handleSubmit() {
-    const name = document.getElementById('name').value.trim();
+    const name  = document.getElementById('name').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
-    const goal = document.getElementById('goal').value;
+    const goal  = document.getElementById('goal').value;
 
     if (!name || !phone || !email || !goal) {
       alert('Please fill in all required fields (Name, Mobile, Email, Goal).');
       return;
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       alert('Please enter a valid email address.');
       return;
     }
@@ -950,38 +967,27 @@
     const struggles = [...document.querySelectorAll('.checkbox-item input:checked')]
       .map(cb => cb.value).join(', ');
 
-    const data = {
-      name, phone, email,
-      city: document.getElementById('city').value || '-',
-      age: document.getElementById('age').value || '-',
-      goal, struggles: struggles || '-',
-      feedback: document.getElementById('feedback').value || '-',
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+    // Keys exactly match Apps Script: p.timestamp, p.name, p.phone, p.email etc.
+    const payload = {
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      name,
+      phone,
+      email,
+      city:      document.getElementById('city').value.trim()     || '-',
+      age:       document.getElementById('age').value             || '-',
+      goal,
+      struggles: struggles                                         || '-',
+      feedback:  document.getElementById('feedback').value.trim() || '-'
     };
 
-    if (SHEET_URL !== 'https://script.google.com/macros/s/AKfycbxgRn-uzOkXLs4wunyCyvXqO9jBnYsQ3kXtxPWKdc0Yys5k9zggiApgc8buNE7c_-0/exec') {
-      try {
-        // Build URL with query params (works with doGet, bypasses CORS completely)
-        const params = new URLSearchParams(data);
-        const fullURL = SHEET_URL + '?' + params.toString();
-
-        // Use script tag injection — guaranteed to work with Google Apps Script
-        await new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = fullURL;
-          script.onload = () => { script.remove(); resolve(); };
-          script.onerror = () => { script.remove(); resolve(); }; // resolve anyway, row likely saved
-          document.head.appendChild(script);
-          setTimeout(resolve, 4000); // fallback timeout
-        });
-      } catch (err) {
-        console.warn('Sheet sync issue:', err);
-      }
-    } else {
-      console.log('📋 [Dev mode — paste your Sheet URL to activate] Signup:', data);
+    try {
+      const qs = new URLSearchParams(payload).toString();
+      await fetch(SHEET_URL + '?' + qs, { method: 'GET', mode: 'no-cors' });
+      console.log('✅ Sent to Google Sheets:', payload);
+    } catch (err) {
+      console.error('❌ Sheet error:', err);
     }
 
-    // Show success
     document.getElementById('form-state').style.display = 'none';
     document.getElementById('success-state').style.display = 'block';
     document.getElementById('early-access').scrollIntoView({ behavior: 'smooth' });
